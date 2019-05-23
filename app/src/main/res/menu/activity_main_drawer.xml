@@ -7,11 +7,11 @@
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:title="@string/menu_history" />
         <item
             android:id="@+id/nav_alerts"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="@string/menu_alarms" />
 
     </group>
 
@@ -20,12 +20,22 @@
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="@string/menu_about" />
             <item
                 android:id="@+id/nav_feedback"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/menu_feedback" />
         </menu>
     </item>
+
+    <item android:title="Share">
+        <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/menu_share" />
+        </menu>
+    </item>
+
 
 </menu>
