@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void showToast(CharSequence text){
+        Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+    }
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -84,15 +88,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_history) {
-            // Handle the camera action
+            showToast("history");
         } else if (id == R.id.nav_alerts) {
-
+            showToast("alerts");
         } else if (id == R.id.nav_about) {
-
+            showToast("about");
         } else if (id == R.id.nav_feedback) {
-
+            showToast("feedback");
         } else if (id == R.id.nav_share) {
-
+            showToast("nav_share");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
