@@ -20,7 +20,8 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private int selectedActionMenuItem;
+    private int selectedActionMenuItem=0;
+    private boolean silentModeOn=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        selectedActionMenuItem=0;
     }
 
     @Override
@@ -62,14 +62,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item;
+
         for (int i=0;i<menu.size();i++) {
-            MenuItem item = menu.getItem(i);
+            item = menu.getItem(i);
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(
                     (selectedActionMenuItem==item.getItemId()) ? Color.RED : Color.BLACK
                                               ), 0, s.length(), 0);
             item.setTitle(s);
         }
+
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.action_silientmode) {
             showToast("silientmode");
+            item.setChecked(!item.isChecked());
             return true;
         }
 

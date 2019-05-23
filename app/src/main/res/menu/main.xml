@@ -11,6 +11,8 @@
         android:id="@+id/action_silientmode"
         android:orderInCategory="100"
         android:title="@string/action_silientmode"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:checkable="true"
+        />
 
 </menu>
