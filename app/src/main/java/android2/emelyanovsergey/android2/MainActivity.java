@@ -1,8 +1,11 @@
 package android2.emelyanovsergey.android2;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +19,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private int selectedActionMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        selectedActionMenuItem=0;
     }
 
     @Override
@@ -51,6 +58,19 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        for (int i=0;i<menu.size();i++) {
+            MenuItem item = menu.getItem(i);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(
+                    (selectedActionMenuItem==item.getItemId()) ? Color.RED : Color.BLACK
+                                              ), 0, s.length(), 0);
+            item.setTitle(s);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -66,12 +86,15 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        selectedActionMenuItem=id;
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            showToast("settings");
             return true;
         }
         if (id == R.id.action_silientmode) {
+            showToast("silientmode");
             return true;
         }
 

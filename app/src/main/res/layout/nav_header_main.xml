@@ -17,7 +17,7 @@
         android:layout_width="280px"
         android:layout_height="180px"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@drawable/ic_about" />
+        app:srcCompat="@drawable/avatar_evserg" />
 
     <TextView
         android:layout_width="match_parent"
