@@ -12,7 +12,7 @@ import android.view.View;
 
 public class MySensorView extends View {
 
-    private static final String TAG = "MySensorViewLog";
+    private static final String TAG = "MySensorView";
     private Paint paint;
 
     private String strTemperature;
