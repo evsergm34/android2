@@ -3,18 +3,18 @@ package android2.emelyanovsergey.android2;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
@@ -62,9 +62,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item;
+
 
         for (int i=0;i<menu.size();i++) {
+            MenuItem item;
             item = menu.getItem(i);
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(
