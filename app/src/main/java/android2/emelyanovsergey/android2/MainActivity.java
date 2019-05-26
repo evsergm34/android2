@@ -1,6 +1,10 @@
 package android2.emelyanovsergey.android2;
 
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,17 +19,30 @@ import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private int selectedActionMenuItem=0;
-    private boolean silentModeOn=false;
+    private int selectedActionMenuItem = 0;
+    private boolean silentModeOn = false;
+    private SensorManager sensorManager;
+    private List<Sensor> sensors;
+    private Sensor sensorTemperature;
+    private Sensor sensorHumidity;
+
+    private TextView sensorTemperatureView;
+    private TextView sensorHumidityView;
+    private MySensorView mySensorView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -48,6 +65,52 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mySensorView = (MySensorView) findViewById(R.id.mySensorView);
+        sensorTemperatureView = (TextView) findViewById(R.id.sensorTemperatureView);
+        sensorHumidityView = (TextView) findViewById(R.id.sensorHumidityView);
+
+
+        //Менеджер дачиков
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        //все датчики
+        sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
+        //дачик температуры
+        sensorTemperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        registerSensorListener(sensorTemperature, listenerSensor, true, sensorTemperatureView);
+
+        //дачик влажности
+        sensorHumidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        registerSensorListener(sensorHumidity, listenerSensor, true, sensorHumidityView);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        registerSensorListener(sensorTemperature, listenerSensor, false, sensorTemperatureView);
+        registerSensorListener(sensorHumidity, listenerSensor, false, sensorHumidityView);
+    }
+
+    private void registerSensorListener(Sensor sensor, SensorEventListener sensorEventListener, boolean regState, TextView sensorView) {
+        if (regState) {
+            if (sensor != null) {
+                sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+                sensorView.setText("датчик готов");
+            } else {
+                if (sensorView != null) sensorView.setText("датчик не обнаружен");
+            }
+        } else {
+            sensorManager.unregisterListener(sensorEventListener);
+            if (sensorView != null) sensorView.setText("пауза");
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        registerSensorListener(sensorTemperature, listenerSensor, true, sensorTemperatureView);
+        registerSensorListener(sensorHumidity, listenerSensor, true, sensorHumidityView);
+
     }
 
     @Override
@@ -64,13 +127,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
 
 
-        for (int i=0;i<menu.size();i++) {
+        for (int i = 0; i < menu.size(); i++) {
             MenuItem item;
             item = menu.getItem(i);
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(
-                    (selectedActionMenuItem==item.getItemId()) ? Color.RED : Color.BLACK
-                                              ), 0, s.length(), 0);
+                    (selectedActionMenuItem == item.getItemId()) ? Color.RED : Color.BLACK
+            ), 0, s.length(), 0);
             item.setTitle(s);
         }
 
@@ -91,7 +154,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        selectedActionMenuItem=id;
+        selectedActionMenuItem = id;
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -107,9 +170,10 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void showToast(CharSequence text){
-        Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
+    private void showToast(CharSequence text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -132,4 +196,27 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    SensorEventListener listenerSensor = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            if (sensorEvent.sensor == sensorTemperature) {
+                sensorTemperatureView.setText("Температура:" + sensorEvent.values[0]);
+                mySensorView.setTemperature(sensorEvent.values[0] + " С");
+                mySensorView.postInvalidate();
+            }
+            if (sensorEvent.sensor == sensorHumidity) {
+                sensorHumidityView.setText("Влажность:" + sensorEvent.values[0]);
+                mySensorView.setHumidity(sensorEvent.values[0] + " %");
+            }
+
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    };
+
 }
