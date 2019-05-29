@@ -80,16 +80,11 @@ public class MySensorView extends View {
         canvas.drawText("Температура:" + strTemperature, 10, 10 + paint.getTextSize(), paint);
         canvas.drawText("Влажность:" + strHumidity, 10, 2 * (10 + paint.getTextSize()), paint);
 
-
-        super.onDraw(canvas);
-
-
     }
 
     public void setTemperature(String temperature) {
         strTemperature = temperature;
     }
-
     public void setHumidity(String humidity) {
         strHumidity = humidity;
     }

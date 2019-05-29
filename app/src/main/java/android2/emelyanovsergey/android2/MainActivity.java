@@ -1,5 +1,7 @@
 package android2.emelyanovsergey.android2;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,6 +21,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,17 @@ public class MainActivity extends AppCompatActivity
     private TextView sensorHumidityView;
     private MySensorView mySensorView;
 
+    private Button btnWeatherServiceStart;
+    private TextView weatherServiceResultView;
+
+    public final static int weatherServiceStatusSTART = 100;
+    public final static int weatherServiceStatusFINISH = 101;
+    public final static String weatherServiceParamPINTENT = "pendingIntent";
+    public final static String weatherServiceParamTIMESLEEP = "timeSleep";
+    public final static String weatherServiceParamResultCity = "ResultCity";
+    public final static String weatherServiceParamResultTemp = "ResultTemp";
+
+    private Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +83,55 @@ public class MainActivity extends AppCompatActivity
         sensorTemperatureView = (TextView) findViewById(R.id.sensorTemperatureView);
         sensorHumidityView = (TextView) findViewById(R.id.sensorHumidityView);
 
-
         //Менеджер дачиков
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         //все датчики
         sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
         //дачик температуры
         sensorTemperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        registerSensorListener(sensorTemperature, listenerSensor, true, sensorTemperatureView);
+        //в onResume registerSensorListener(sensorTemperature, listenerSensor, true, sensorTemperatureView);
 
         //дачик влажности
         sensorHumidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        registerSensorListener(sensorHumidity, listenerSensor, true, sensorHumidityView);
+        // в onResume registerSensorListener(sensorHumidity, listenerSensor, true, sensorHumidityView);
 
+
+        weatherServiceResultView = (TextView) findViewById(R.id.weatherServiceResult);
+        btnWeatherServiceStart = (Button) findViewById(R.id.btnWeatherServiceStart);
+        btnWeatherServiceStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PendingIntent weatherPI = createPendingResult(0, new Intent(), 0);
+                serviceIntent = new Intent(MainActivity.this, weatherService.class);
+                serviceIntent.putExtra(weatherServiceParamPINTENT, weatherPI);
+                serviceIntent.putExtra(weatherServiceParamTIMESLEEP, 5);
+                startService(serviceIntent);
+            }
+
+            ;
+        });
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //bindService( new Intent(MainActivity.this, weatherService.class) )
+        //с bindService пока не успел до конца разобраться - разберусь отдельно
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == weatherServiceStatusSTART) {
+            weatherServiceResultView.setText("загрузка в службе выполняется");
+        }
+        if (resultCode == weatherServiceStatusFINISH) {
+            String weatherCity = data.getStringExtra(weatherServiceParamResultCity);
+            String weatherTemp = data.getStringExtra(weatherServiceParamResultTemp);
+            weatherServiceResultView.setText("Погода " + weatherCity + " " + weatherTemp);
+            stopService(serviceIntent);
+        }
     }
 
     @Override
@@ -106,8 +156,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         registerSensorListener(sensorTemperature, listenerSensor, true, sensorTemperatureView);
         registerSensorListener(sensorHumidity, listenerSensor, true, sensorHumidityView);
 
