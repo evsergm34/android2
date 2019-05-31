@@ -32,9 +32,22 @@
         <android2.emelyanovsergey.android2.MySensorView
             android:id="@+id/mySensorView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="100dp"
             app:humidity="нет данных"
             app:temperature="нет данных" />
+
+
+        <TextView
+            android:id="@+id/weatherServiceResult"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="служба weatherService" />
+
+        <Button
+            android:id="@+id/btnWeatherServiceStart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Запустить WeatherService" />
 
 
     </LinearLayout>
