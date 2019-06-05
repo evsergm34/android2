@@ -2,6 +2,7 @@ package android2.emelyanovsergey.android2;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -22,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    private String City = "";
+
 
     private int selectedActionMenuItem = 0;
     private boolean silentModeOn = false;
@@ -53,9 +59,15 @@ public class MainActivity extends AppCompatActivity
 
     private Intent serviceIntent;
 
+    //lesson4
+    public SharedPreferences sharedPreferences;
+    private EditText myCity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferences = getPreferences(MODE_PRIVATE);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,6 +90,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        myCity = (EditText) findViewById(R.id.weatherMyCity);
 
         mySensorView = (MySensorView) findViewById(R.id.mySensorView);
         sensorTemperatureView = (TextView) findViewById(R.id.sensorTemperatureView);
@@ -134,11 +148,24 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
         registerSensorListener(sensorTemperature, listenerSensor, false, sensorTemperatureView);
         registerSensorListener(sensorHumidity, listenerSensor, false, sensorHumidityView);
+
+        saveSharedPreferenes(sharedPreferences);
+    }
+
+    private void getSharedPreferenes(SharedPreferences sp) {
+        myCity.setText(sp.getString("city", ""));
+    }
+
+    private void saveSharedPreferenes(SharedPreferences sp) {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("city", myCity.getText().toString());
+        editor.commit();
     }
 
     private void registerSensorListener(Sensor sensor, SensorEventListener sensorEventListener, boolean regState, TextView sensorView) {
@@ -160,6 +187,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         registerSensorListener(sensorTemperature, listenerSensor, true, sensorTemperatureView);
         registerSensorListener(sensorHumidity, listenerSensor, true, sensorHumidityView);
+        getSharedPreferenes(sharedPreferences);
 
     }
 
@@ -190,6 +218,7 @@ public class MainActivity extends AppCompatActivity
 
         return super.onPrepareOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

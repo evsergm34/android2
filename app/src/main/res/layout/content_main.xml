@@ -49,6 +49,23 @@
             android:layout_height="match_parent"
             android:text="Запустить WeatherService" />
 
+        <TextView
+            android:id="@+id/lesson4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="lesson4" />
+
+        <EditText
+            android:id="@+id/weatherMyCity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="мой город" />
+
+        <Button
+            android:id="@+id/btnWeatherMyCity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Загрузить погоду" />
 
     </LinearLayout>
 
